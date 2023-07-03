@@ -1,22 +1,25 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
+import verify from "../utils/verify";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const baseUri = "ipfs://XXX/";
 
-  const lockedAmount = ethers.parseEther("0.001");
+  // 1 storage
+  // 2 base avec la lib
+  // 3 nft
+  // 4 factory
 
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+  const worldgram = await ethers.deployContract("Worldgram721", [baseUri]);
+  await worldgram.waitForDeployment();
+  console.log(`Worldgram deployed to ${worldgram.target}`);
 
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  if (network.name === "sepolia") {
+    console.log("Verifying Worldgram...");
+    // Wait for 5 blocks
+    let currentBlock = await ethers.provider.getBlockNumber();
+    while (currentBlock + 5 > (await ethers.provider.getBlockNumber())) {}
+    await verify(worldgram.target.toString(), [baseUri]);
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
