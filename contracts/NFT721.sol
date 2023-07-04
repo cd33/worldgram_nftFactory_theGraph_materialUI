@@ -33,7 +33,7 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
         uint16 _maxSupply,
         uint _publicSalePrice,
         address _recipient
-    ) external initializer onlyBase nonReentrant {
+    ) external initializer nonReentrant { // onlyfactory
         __ERC721_init(_name, _symbol);
         baseURI = _baseURI;
         maxSupply = _maxSupply;
@@ -66,6 +66,10 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
     function setWorldgramBase(address _worldgramBase) external onlyBase {
         worldgramBase = _worldgramBase;
     }
+
+    // function setFactory(address _factory) external onlyBase {
+    //     factory = _factory;
+    // }
 
     function setRecipient(address _newRecipient) external onlyBase {
         recipient = _newRecipient;

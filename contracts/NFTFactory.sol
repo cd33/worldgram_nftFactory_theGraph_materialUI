@@ -2,8 +2,8 @@
 pragma solidity 0.8.18;
 
 import "./NFT721.sol";
-// import "./GarageStorageLibrary.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import "hardhat/console.sol";
 
 /// @title Worldgram NFT Factory
 /// @author cd33
@@ -26,7 +26,7 @@ contract NFTFactory {
     }
 
     modifier onlyBase() {
-        require(worldgramBase == msg.sender, "Only Base authorized");
+        require(worldgramBase == msg.sender, "Only base authorized");
         _;
     }
 

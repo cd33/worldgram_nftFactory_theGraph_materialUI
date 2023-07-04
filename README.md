@@ -26,7 +26,6 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 ## PLAN
 II. Développement de la factory de NFT
     C. Écrire des tests unitaires pour vérifier la fonctionnalité de la factory de NFT
-    LIBRAIRIE NON LINKE
 
 III. Intégration des requêtes TheGraph
     A. Comprendre le fonctionnement de TheGraph et configurer un sous-graphe

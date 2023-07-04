@@ -15,8 +15,9 @@ describe.only("NFTFactory contract nft tests", async () => {
     factory: NFTFactory,
     nft: NFT721,
     owner: SignerWithAddress,
+    nftId,
     nftAddr,
-    nftContract;
+    nftCloneContract: NFT721 | any;
 
   beforeEach("Setup", async () => {
     ({ base, nft, factory, owner } = await loadFixture(setupContractsFixture));
@@ -36,6 +37,21 @@ describe.only("NFTFactory contract nft tests", async () => {
   });
 
   it("should create a new nft clone when called from base", async () => {
+    await expect(
+      base.newNFT(
+        "Worldgram",
+        "WGM",
+        baseUri,
+        maxSupply,
+        publicSalePrice,
+        recipient
+      )
+    )
+      .to.emit(base, "NFTAdded")
+      .withArgs(1, "0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81");
+  });
+
+  it("check storage after clone", async () => {
     const tx = await base.newNFT(
       "Worldgram",
       "WGM",
@@ -44,20 +60,26 @@ describe.only("NFTFactory contract nft tests", async () => {
       publicSalePrice,
       recipient
     );
-    const receipt = await tx.wait();
-    // const nftId =
-    //   receipt?.events &&
-    //   receipt.events[2].args &&
-    //   receipt.events[2].args._nftId;
-    receipt && console.log("receipt :>> ", receipt);
-    // const nftLib = await base.getNFT(nftId);
-    // nftAddr = nftLib.addressContract;
-    // nftContract = nft.attach(nftAddr);
-    // const nftData = await nftContract.nftData();
+    const receipt: any = await tx.wait();
+    nftId = receipt && receipt.logs[2].args[0];
+    nftAddr = receipt && receipt.logs[2].args[1];
+    expect(nftId).to.equal(1);
+    expect(nftAddr).to.equal("0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81");
 
-    // expect(nftData.name).to.equal("Lambo");
-    // expect(nftData.price).to.equal(200000);
-    // expect(nftData.secondHand).to.equal(true);
-    // expect(nftData.owner).to.equal(owner.address);
+    const getNFTAddress = await base.getNFTAddress(nftId);
+    expect(getNFTAddress).to.equal(
+      "0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81"
+    );
+
+    // check variables created nft contract
+    nftCloneContract = nft.attach(nftAddr);
+    expect(await nftCloneContract.baseURI()).to.equal(baseUri);
+    expect(await nftCloneContract.maxSupply()).to.equal(maxSupply);
+    expect(await nftCloneContract.publicSalePrice()).to.equal(publicSalePrice);
+    expect(await nftCloneContract.nextNFT()).to.equal(0);
+  });
+
+  it("tester de rappeler initialize, voir si nécessite protection", async () => {
+    // puis demander à chatgtp si c'est sécur au cas ou je me fais stopper
   });
 });

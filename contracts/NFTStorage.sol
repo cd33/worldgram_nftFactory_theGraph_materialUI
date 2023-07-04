@@ -7,9 +7,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /// @author cd33
 contract NFTStorage is Ownable {
     address public worldgramBase;
-
-    mapping(bytes32 => bool) private boolStorage;
+    
     mapping(bytes32 => address) private addressStorage;
+
+    constructor(address _worldgramBase) {
+        worldgramBase = _worldgramBase;
+    }
 
     modifier onlyBase() {
         require(worldgramBase == msg.sender, "Only base authorized");

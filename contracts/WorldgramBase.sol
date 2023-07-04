@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.18;
 
-import "./NFTStorageLibrary.sol";
 import "./NFT721.sol";
 import "./interfaces/INFTFactory.sol";
 import "./interfaces/INFTStorage.sol";
 import "./interfaces/INFT721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 /// @title Worldgram Base
 /// @author cd33
 contract WorldgramBase is Ownable {
-    // using NFTStorageLibrary for *;
     INFTStorage public nftStorage;
     INFTFactory public nftFactory;
 
@@ -19,11 +18,7 @@ contract WorldgramBase is Ownable {
 
     event NFTAdded(uint _nftId, address _nftAddress);
 
-    constructor(address _nftStorage) {
-        nftStorage = INFTStorage(_nftStorage);
-    }
-
-    function setNFTStorage(address _nftStorage) external {
+    function setNFTStorage(address _nftStorage) external onlyOwner {
         nftStorage = INFTStorage(_nftStorage);
     }
 
@@ -31,15 +26,27 @@ contract WorldgramBase is Ownable {
         nftFactory = INFTFactory(_nftFactory);
     }
 
+    function setNFT(
+        uint _id,
+        address _addressContract
+    ) private {
+        nftStorage.setAddress(
+            keccak256(abi.encodePacked("nft.addressContract", _id)),
+            _addressContract
+        );
+    }
+
     function storeNFT(
         address _addressContract
     ) private {
         nextId++;
-        NFTStorageLibrary.setNFT(address(nftStorage), nextId, _addressContract);
+        setNFT(nextId, _addressContract);
     }
 
-    function getNFTAddress(uint _nftId) public view returns (address) {
-        return NFTStorageLibrary.getNFT(address(nftStorage), _nftId);
+    function getNFTAddress(uint _nftId) external view returns (address) {
+        return nftStorage.getAddress(
+            keccak256(abi.encodePacked("nft.addressContract", _nftId))
+        );
     }
 
     function newNFT(
@@ -62,7 +69,7 @@ contract WorldgramBase is Ownable {
         emit NFTAdded(nextId, nftAddress);
     }
 
-    // ADMIN
+    // *** ADMIN ***
     // STORAGE
     function setWorldgramBaseSTORAGE(address _worldgramBase) external onlyOwner {
         nftStorage.setWorldgramBase(_worldgramBase);

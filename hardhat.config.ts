@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
     apiKey: ETHERSCAN,
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
   },
 };
 
