@@ -23,15 +23,15 @@ contract NFTStorage is Ownable {
         worldgramBase = _worldgramBase;
     }
 
-    function getAddress(bytes32 _key) external view returns (address) {
+    function getAddressNFT(bytes32 _key) external view returns (address) {
         return addressStorage[_key];
     }
 
-    function setAddress(bytes32 _key, address _value) external onlyBase {
+    function setAddressNFT(bytes32 _key, address _value) external onlyBase {
         addressStorage[_key] = _value;
     }
 
-    function deleteAddress(bytes32 _key) external onlyBase {
+    function deleteAddressNFT(bytes32 _key) external onlyBase {
         delete addressStorage[_key];
     }
 }

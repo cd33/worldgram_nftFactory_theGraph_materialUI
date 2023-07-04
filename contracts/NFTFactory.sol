@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import "./NFT721.sol";
+import "./interfaces/INFT721.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "hardhat/console.sol";
 
 /// @title Worldgram NFT Factory
 /// @author cd33
 contract NFTFactory {
-    address worldgramBase;
-    address nftImplementation;
+    address private worldgramBase;
+    address private nftImplementation;
 
     event NFTContractCreated(
         string _name,
@@ -47,7 +47,7 @@ contract NFTFactory {
         address _recipient
     ) public onlyBase returns(address) {
         address clone = Clones.clone(nftImplementation);
-        NFT721(clone).initialize(_name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient);
+        INFT721(clone).initialize(_name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient, address(worldgramBase));
         emit NFTContractCreated(_name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient);
         return clone;
     }

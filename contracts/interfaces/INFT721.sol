@@ -2,6 +2,15 @@
 pragma solidity 0.8.18;
 
 interface INFT721 {
+    function initialize(
+        string calldata _name,
+        string calldata _symbol,
+        string calldata _baseURI,
+        uint16 _maxSupply,
+        uint _publicSalePrice,
+        address _recipient,
+        address _worldgramBase
+    ) external;
     function pause() external;
     function unpause() external;
     function setWorldgramBase(address _worldgramBase) external;

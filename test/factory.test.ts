@@ -10,7 +10,7 @@ const maxSupply = 100;
 const publicSalePrice = ethers.parseEther("0.1");
 const recipient = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // 2nd address hardhat
 
-describe.only("NFTFactory contract nft tests", async () => {
+describe("NFTFactory contract tests", async () => {
   let base: WorldgramBase,
     factory: NFTFactory,
     nft: NFT721,
@@ -21,19 +21,6 @@ describe.only("NFTFactory contract nft tests", async () => {
 
   beforeEach("Setup", async () => {
     ({ base, nft, factory, owner } = await loadFixture(setupContractsFixture));
-  });
-
-  it("should revert when not called by base", async () => {
-    await expect(
-      factory.createNFT(
-        "Worldgram",
-        "WGM",
-        baseUri,
-        maxSupply,
-        publicSalePrice,
-        recipient
-      )
-    ).to.be.revertedWith("Only base authorized");
   });
 
   it("should create a new nft clone when called from base", async () => {
@@ -79,7 +66,63 @@ describe.only("NFTFactory contract nft tests", async () => {
     expect(await nftCloneContract.nextNFT()).to.equal(0);
   });
 
-  it("tester de rappeler initialize, voir si nécessite protection", async () => {
-    // puis demander à chatgtp si c'est sécur au cas ou je me fais stopper
+  it("setWorldgramBase", async () => {
+    const tx = await base.newNFT(
+      "Worldgram",
+      "WGM",
+      baseUri,
+      maxSupply,
+      publicSalePrice,
+      recipient
+    );
+    const receipt: any = await tx.wait();
+    nftAddr = receipt && receipt.logs[2].args[1];
+    nftCloneContract = nft.attach(nftAddr);
+
+    await expect(factory.setWorldgramBase(nftAddr)).to.be.revertedWith(
+      "Only base authorized"
+    );
+
+    await base.setWorldgramBaseNFTFACTORY(owner.address);
+
+    await expect(factory.setWorldgramBase(nftAddr)).to.be.not.reverted;
+  });
+
+  it("setNFTImplementation", async () => {
+    const tx = await base.newNFT(
+      "Worldgram",
+      "WGM",
+      baseUri,
+      maxSupply,
+      publicSalePrice,
+      recipient
+    );
+    const receipt: any = await tx.wait();
+    nftAddr = receipt && receipt.logs[2].args[1];
+    nftCloneContract = nft.attach(nftAddr);
+
+    await expect(base.setNFTImplementationNFTFACTORY(nftAddr)).to.be.not
+      .reverted;
+  });
+
+  it("REVERT setWorldgramBase, setNFTImplementation and createNFT", async () => {
+    await expect(factory.setWorldgramBase(owner.address)).to.be.revertedWith(
+      "Only base authorized"
+    );
+
+    await expect(
+      factory.setNFTImplementation(owner.address)
+    ).to.be.revertedWith("Only base authorized");
+
+    await expect(
+      factory.createNFT(
+        "Worldgram",
+        "WGM",
+        baseUri,
+        maxSupply,
+        publicSalePrice,
+        recipient
+      )
+    ).to.be.revertedWith("Only base authorized");
   });
 });

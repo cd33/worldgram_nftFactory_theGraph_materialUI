@@ -10,7 +10,7 @@ export const setupContractsFixture = async () => {
   const storage = await ethers.deployContract("NFTStorage", [base.target]);
   await storage.waitForDeployment();
 
-  const nft = await ethers.deployContract("NFT721", [base.target]);
+  const nft = await ethers.deployContract("NFT721", []);
   await nft.waitForDeployment();
 
   const factory = await ethers.deployContract("NFTFactory", [
@@ -23,8 +23,8 @@ export const setupContractsFixture = async () => {
   await base.setNFTFactory(factory.target);
 
   return {
-    storage,
     base,
+    storage,
     nft,
     factory,
     owner,

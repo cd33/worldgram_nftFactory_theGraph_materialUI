@@ -1,93 +1,76 @@
-// import { expect } from "chai";
-// import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-// import { setupContractsFixture } from "./utils";
-// import { GarageStorage, Shop, CarFactory } from "../typechain-types";
+import { expect } from "chai";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import { setupContractsFixture } from "./utils";
+import { WorldgramBase, NFTStorage } from "../typechain-types";
+import { ethers } from "hardhat";
 
-// describe("GarageStorage", () => {
-//   let garageStorage: GarageStorage,
-//     shop: Shop,
-//     carFactory: CarFactory,
-//     owner;
+const baseUri = "ipfs://XXX/";
+const maxSupply = 100;
+const publicSalePrice = ethers.parseEther("0.1");
+const recipient = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // 2nd address hardhat
 
-//   before("Setup", async () => {
-//     ({ garageStorage, shop, carFactory, owner } = await loadFixture(
-//       setupContractsFixture
-//     ));
-//     await shop.setCarFactory(carFactory.address);
-//   });
+describe("Storage contract tests", async () => {
+  let base: WorldgramBase,
+    storage: NFTStorage,
+    owner: SignerWithAddress,
+    nftId: number;
 
-//   it("Set, Get and Delete", async () => {
-//     let addressContract = await garageStorage.getAddress(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.addressContract", 1])
-//       )
-//     );
-//     let available = await garageStorage.getBool(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.available", 1])
-//       )
-//     );
-//     expect(addressContract).to.equal(
-//       "0x0000000000000000000000000000000000000000"
-//     );
-//     expect(available).to.equal(false);
+  beforeEach("Setup", async () => {
+    ({ base, storage, owner } = await loadFixture(setupContractsFixture));
 
-//     await garageStorage.setShop(owner.address);
+    const tx = await base.newNFT(
+      "Worldgram",
+      "WGM",
+      baseUri,
+      maxSupply,
+      publicSalePrice,
+      recipient
+    );
+    const receipt: any = await tx.wait();
+    nftId = receipt && receipt.logs[2].args[0];
+  });
 
-//     const car = {
-//       addressContract: owner.address,
-//       available: true,
-//     };
+  it("Set, Get and Delete from base and in direct", async () => {
+    const data = ethers.keccak256(
+      ethers.solidityPacked(
+        ["string", "uint256"],
+        ["nft.addressContract", nftId]
+      )
+    );
+    let addressContract = await storage.getAddressNFT(data);
+    const addressContractFromBase = await base.getNFTAddress(nftId);
+    expect(addressContract)
+      .to.equal(addressContractFromBase)
+      .to.equal("0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81");
 
-//     await garageStorage.setAddress(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.addressContract", 1])
-//       ),
-//       car.addressContract
-//     );
-//     await garageStorage.setBool(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.available", 1])
-//       ),
-//       car.available
-//     );
-//     addressContract = await garageStorage.getAddress(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.addressContract", 1])
-//       )
-//     );
-//     available = await garageStorage.getBool(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.available", 1])
-//       )
-//     );
-//     expect(addressContract).to.equal(car.addressContract);
-//     expect(available).to.equal(car.available);
+    await base.setAddressSTORAGE(data, owner.address);
+    addressContract = await storage.getAddressNFT(data);
+    expect(addressContract).to.equal(owner.address);
 
-//     await garageStorage.deleteAddress(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.addressContract", 1])
-//       )
-//     );
-//     await garageStorage.deleteBool(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.available", 1])
-//       )
-//     );
+    await base.deleteAddressSTORAGE(data);
+    addressContract = await storage.getAddressNFT(data);
+    expect(addressContract).to.equal(
+      "0x0000000000000000000000000000000000000000"
+    );
 
-//     addressContract = await garageStorage.getAddress(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.addressContract", 1])
-//       )
-//     );
-//     available = await garageStorage.getBool(
-//       utils.keccak256(
-//         utils.solidityPack(["string", "uint"], ["car.available", 1])
-//       )
-//     );
-//     expect(addressContract).to.equal(
-//       "0x0000000000000000000000000000000000000000"
-//     );
-//     expect(available).to.equal(false);
-//   });
-// });
+    await expect(storage.setAddressNFT(data, owner.address)).to.be.revertedWith(
+      "Only base authorized"
+    );
+    await expect(storage.deleteAddressNFT(data)).to.be.revertedWith(
+      "Only base authorized"
+    );
+
+    await base.setWorldgramBaseSTORAGE(owner.address);
+
+    await storage.setAddressNFT(data, owner.address);
+    addressContract = await storage.getAddressNFT(data);
+    expect(addressContract).to.equal(owner.address);
+
+    await storage.deleteAddressNFT(data);
+    addressContract = await storage.getAddressNFT(data);
+    expect(addressContract).to.equal(
+      "0x0000000000000000000000000000000000000000"
+    );
+  });
+});

@@ -30,7 +30,7 @@ contract WorldgramBase is Ownable {
         uint _id,
         address _addressContract
     ) private {
-        nftStorage.setAddress(
+        nftStorage.setAddressNFT(
             keccak256(abi.encodePacked("nft.addressContract", _id)),
             _addressContract
         );
@@ -44,7 +44,7 @@ contract WorldgramBase is Ownable {
     }
 
     function getNFTAddress(uint _nftId) external view returns (address) {
-        return nftStorage.getAddress(
+        return nftStorage.getAddressNFT(
             keccak256(abi.encodePacked("nft.addressContract", _nftId))
         );
     }
@@ -75,10 +75,10 @@ contract WorldgramBase is Ownable {
         nftStorage.setWorldgramBase(_worldgramBase);
     }
     function setAddressSTORAGE(bytes32 _key, address _value) external onlyOwner {
-        nftStorage.setAddress(_key, _value);
+        nftStorage.setAddressNFT(_key, _value);
     }
     function deleteAddressSTORAGE(bytes32 _key) external onlyOwner {
-        nftStorage.deleteAddress(_key);
+        nftStorage.deleteAddressNFT(_key);
     }
 
     // NFTFACTORY

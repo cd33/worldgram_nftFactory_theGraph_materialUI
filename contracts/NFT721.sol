@@ -5,13 +5,14 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "hardhat/console.sol";
 
 /// @title Worldgram NFT ERC721 collection
 /// @author cd33
 contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
     using StringsUpgradeable for uint256;
 
-    address private worldgramBase;
+    address public worldgramBase;
     address private recipient;
 
     string public baseURI;
@@ -22,9 +23,7 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
 
     event StepChanged(uint8 step);
 
-    constructor(address _worldgramBase) ERC721Upgradeable() {
-        worldgramBase = _worldgramBase;
-    }
+    constructor() ERC721Upgradeable() {}
 
     function initialize(
         string calldata _name,
@@ -32,13 +31,15 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
         string calldata _baseURI,
         uint16 _maxSupply,
         uint _publicSalePrice,
-        address _recipient
-    ) external initializer nonReentrant { // onlyfactory
+        address _recipient,
+        address _worldgramBase
+    ) external initializer nonReentrant {
         __ERC721_init(_name, _symbol);
         baseURI = _baseURI;
         maxSupply = _maxSupply;
         publicSalePrice = _publicSalePrice;
         recipient = _recipient;
+        worldgramBase = _worldgramBase;
     }
 
     modifier onlyBase() {
@@ -66,11 +67,7 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
     function setWorldgramBase(address _worldgramBase) external onlyBase {
         worldgramBase = _worldgramBase;
     }
-
-    // function setFactory(address _factory) external onlyBase {
-    //     factory = _factory;
-    // }
-
+    
     function setRecipient(address _newRecipient) external onlyBase {
         recipient = _newRecipient;
     }
