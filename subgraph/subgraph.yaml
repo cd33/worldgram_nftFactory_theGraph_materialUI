@@ -1,0 +1,105 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: WorldgramBase
+    network: sepolia
+    source:
+      address: "0xfedAA3D99015a93E0d7A5904638acF4B9bb34a28"
+      abi: WorldgramBase
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NFTAdded
+        - OwnershipTransferred
+      abis:
+        - name: WorldgramBase
+          file: ./abis/WorldgramBase.json
+      eventHandlers:
+        - event: NFTAdded(uint256,address)
+          handler: handleNFTAdded
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/worldgram-base.ts
+  - kind: ethereum
+    name: NFTStorage
+    network: sepolia
+    source:
+      address: "0xD6E93a9e02E1eA33d7a5A55eF713FA5E2d2c5BBD"
+      abi: NFTStorage
+      startBlock: 3829623
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NFTStorageOwnershipTransferred
+      abis:
+        - name: NFTStorage
+          file: ./abis/NFTStorage.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/nft-storage.ts
+  - kind: ethereum
+    name: NFT721
+    network: sepolia
+    source:
+      address: "0xe7d3c30D2c0c567fd2ADa0487aAff068880Df041"
+      abi: NFT721
+      startBlock: 3829625
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - Initialized
+        - Paused
+        - StepChanged
+        - Transfer
+        - Unpaused
+      abis:
+        - name: NFT721
+          file: ./abis/NFT721.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: Paused(address)
+          handler: handlePaused
+        - event: StepChanged(uint8)
+          handler: handleStepChanged
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ./src/nft-721.ts
+  - kind: ethereum
+    name: NFTFactory
+    network: sepolia
+    source:
+      address: "0x30591669c178b572eca96d57F971C163e32d854F"
+      abi: NFTFactory
+      startBlock: 3829626
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NFTContractCreated
+      abis:
+        - name: NFTFactory
+          file: ./abis/NFTFactory.json
+      eventHandlers:
+        - event: NFTContractCreated(string,string,string,uint16,uint256,address)
+          handler: handleNFTContractCreated
+      file: ./src/nft-factory.ts
