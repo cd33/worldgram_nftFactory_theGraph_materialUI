@@ -3,7 +3,6 @@ pragma solidity 0.8.18;
 
 import "./interfaces/INFT721.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "hardhat/console.sol";
 
 /// @title Worldgram NFT Factory
 /// @author cd33
@@ -12,12 +11,13 @@ contract NFTFactory {
     address private nftImplementation;
 
     event NFTContractCreated(
-        string _name,
-        string _symbol,
-        string _baseURI,
-        uint16 _maxSupply,
-        uint _publicSalePrice,
-        address _recipient
+        address nftContractAddress,
+        string name,
+        string symbol,
+        string baseURI,
+        uint16 maxSupply,
+        uint publicSalePrice,
+        address recipient
     );
 
     constructor(address _worldgramBase, address _nftImplementation) {
@@ -48,7 +48,7 @@ contract NFTFactory {
     ) public onlyBase returns(address) {
         address clone = Clones.clone(nftImplementation);
         INFT721(clone).initialize(_name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient, address(worldgramBase));
-        emit NFTContractCreated(_name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient);
+        emit NFTContractCreated(clone, _name, _symbol, _baseURI, _maxSupply, _publicSalePrice, _recipient);
         return clone;
     }
 }

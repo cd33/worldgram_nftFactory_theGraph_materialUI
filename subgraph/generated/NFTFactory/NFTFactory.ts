@@ -23,28 +23,32 @@ export class NFTContractCreated__Params {
     this._event = event;
   }
 
-  get _name(): string {
-    return this._event.parameters[0].value.toString();
+  get nftContractAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 
-  get _symbol(): string {
+  get name(): string {
     return this._event.parameters[1].value.toString();
   }
 
-  get _baseURI(): string {
+  get symbol(): string {
     return this._event.parameters[2].value.toString();
   }
 
-  get _maxSupply(): i32 {
-    return this._event.parameters[3].value.toI32();
+  get baseURI(): string {
+    return this._event.parameters[3].value.toString();
   }
 
-  get _publicSalePrice(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
+  get maxSupply(): i32 {
+    return this._event.parameters[4].value.toI32();
   }
 
-  get _recipient(): Address {
-    return this._event.parameters[5].value.toAddress();
+  get publicSalePrice(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+
+  get recipient(): Address {
+    return this._event.parameters[6].value.toAddress();
   }
 }
 

@@ -5,14 +5,13 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "hardhat/console.sol";
 
 /// @title Worldgram NFT ERC721 collection
 /// @author cd33
 contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
     using StringsUpgradeable for uint256;
 
-    address public worldgramBase;
+    address private worldgramBase;
     address private recipient;
 
     string public baseURI;
@@ -20,8 +19,6 @@ contract NFT721 is ERC721Upgradeable, PausableUpgradeable, ReentrancyGuardUpgrad
     uint16 public maxSupply;
     uint256 public publicSalePrice;
     uint256 public nextNFT;
-
-    event StepChanged(uint8 step);
 
     constructor() ERC721Upgradeable() {}
 

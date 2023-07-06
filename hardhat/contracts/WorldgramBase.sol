@@ -6,7 +6,6 @@ import "./interfaces/INFTFactory.sol";
 import "./interfaces/INFTStorage.sol";
 import "./interfaces/INFT721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
 
 /// @title Worldgram Base
 /// @author cd33
@@ -16,7 +15,7 @@ contract WorldgramBase is Ownable {
 
     uint256 private nextId;
 
-    event NFTAdded(uint _nftId, address _nftAddress);
+    event NFTAdded(uint nftId, address nftAddress);
 
     function setNFTStorage(address _nftStorage) external onlyOwner {
         nftStorage = INFTStorage(_nftStorage);

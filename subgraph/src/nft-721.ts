@@ -1,115 +1,90 @@
+import { Address } from "@graphprotocol/graph-ts";
 import {
-  Approval as ApprovalEvent,
-  ApprovalForAll as ApprovalForAllEvent,
-  Initialized as InitializedEvent,
   Paused as PausedEvent,
-  StepChanged as StepChangedEvent,
   Transfer as TransferEvent,
-  Unpaused as UnpausedEvent
-} from "../generated/NFT721/NFT721"
-import {
-  Approval,
-  ApprovalForAll,
-  Initialized,
-  Paused,
-  StepChanged,
-  Transfer,
-  Unpaused
-} from "../generated/schema"
+  Unpaused as UnpausedEvent,
+} from "../generated/templates/NFT721/NFT721";
+import { ensureNewNFTContract, nftContractId } from "./entities/NFTContract";
+import { nftToken, ensureNewNFTToken } from "./entities/NFTToken";
+import { ensureNewUser, userId } from "./entities/User";
 
-export function handleApproval(event: ApprovalEvent): void {
-  let entity = new Approval(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.owner = event.params.owner
-  entity.approved = event.params.approved
-  entity.tokenId = event.params.tokenId
+export function handleTransfer(event: TransferEvent): void {
+  if (
+    event.params.from == new Address(0x0000000000000000000000000000000000000000)
+  ) {
+    let contractId = nftContractId(event.address);
+    let nftContract = ensureNewNFTContract(contractId);
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+    let usrId = userId(event.params.to);
+    let user = ensureNewUser(usrId);
+    user.address = event.params.to;
 
-  entity.save()
-}
+    let nftTokenId = nftToken(event.address, event.params.to);
+    let tokenNFT = ensureNewNFTToken(nftTokenId);
 
-export function handleApprovalForAll(event: ApprovalForAllEvent): void {
-  let entity = new ApprovalForAll(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.owner = event.params.owner
-  entity.operator = event.params.operator
-  entity.approved = event.params.approved
+    tokenNFT.nftId = event.params.tokenId;
+    tokenNFT.contract = nftContract.id
+    tokenNFT.user = user.id;
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+    nftContract.totalSupply += 1;
+    // let tokens = nftContract.tokens;
+    // tokens.push(tokenNFT.id);
+    // nftContract.tokens = tokens;
 
-  entity.save()
-}
+    user.save();
+    tokenNFT.save();
+    nftContract.save();
+  } else {
+    let contractId = nftContractId(event.address);
+    let nftContract = ensureNewNFTContract(contractId);
 
-export function handleInitialized(event: InitializedEvent): void {
-  let entity = new Initialized(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.version = event.params.version
+    let usrId1 = userId(event.params.from);
+    let user1 = ensureNewUser(usrId1);
+    let usrId2 = userId(event.params.to);
+    let user2 = ensureNewUser(usrId2);
+    user1.address = event.params.to;
+    user2.address = event.params.from;
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+    let nftTokenId = nftToken(event.address, event.params.from);
+    let tokenNFT = ensureNewNFTToken(nftTokenId);
+    tokenNFT.nftId = event.params.tokenId;
+    tokenNFT.contract = nftContract.id
+    tokenNFT.user = user2.id;
 
-  entity.save()
+    user1.save();
+    user2.save();
+    tokenNFT.save();
+    nftContract.save()
+  }
 }
 
 export function handlePaused(event: PausedEvent): void {
-  let entity = new Paused(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.account = event.params.account
+  let contractId = nftContractId(event.address);
+  let nftContract = ensureNewNFTContract(contractId);
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  nftContract.isPaused = true;
 
-  entity.save()
-}
-
-export function handleStepChanged(event: StepChangedEvent): void {
-  let entity = new StepChanged(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.step = event.params.step
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleTransfer(event: TransferEvent): void {
-  let entity = new Transfer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.tokenId = event.params.tokenId
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  nftContract.save();
 }
 
 export function handleUnpaused(event: UnpausedEvent): void {
-  let entity = new Unpaused(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.account = event.params.account
+  let contractId = nftContractId(event.address);
+  let nftContract = ensureNewNFTContract(contractId);
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  nftContract.isPaused = false;
 
-  entity.save()
+  nftContract.save();
 }
+
+// export function handleInitialized(event: InitializedEvent): void {
+//   let entity = new Initialized(
+//     event.transaction.hash.concatI32(event.logIndex.toI32())
+//   )
+//   entity.version = event.params.version
+
+//   entity.blockNumber = event.block.number
+//   entity.blockTimestamp = event.block.timestamp
+//   entity.transactionHash = event.transaction.hash
+
+//   entity.save()
+// }

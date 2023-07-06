@@ -25,10 +25,6 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 
 ## PLAN
 I. Intégration des requêtes TheGraph
-    A. Comprendre le fonctionnement de TheGraph et configurer un sous-graphe
-        1. Explorer la documentation de TheGraph pour comprendre les concepts clés
-        2. Configurer un sous-graphe pour votre factory de NFT sur TheGraph
-
     B. Créer des requêtes pour interagir avec les contrats NFT déployés
         1. Identifier les données à récupérer pour chaque nouveau NFT déployé
         2. Écrire des requêtes GraphQL pour récupérer ces données
@@ -46,6 +42,14 @@ II. Conception de la page React avec Material-UI
         1. Utiliser des appels API pour récupérer les données depuis la factory de NFT
         2. Afficher les résultats sur la page React en utilisant les composants de Material-UI
 
+* navbar avec rainbow wallet et context
+  - https://frontendshape.com/post/create-a-responsive-navbar-in-react-with-mui-5
+  - https://javascript.works-hub.com/learn/how-to-create-a-responsive-navbar-using-material-ui-and-react-router-f9a01
+  - https://mui.com/material-ui/react-app-bar/
+
+* Une page admin avec l'ensemble des contrats créés puis acces à autre page admin avec toutes les fonctions
+* Une page dashboard qui affiche les différentes collections nft
+
 III. Tests unitaires
     A. Écrire des tests unitaires complets pour les requêtes TheGraph ?
 
@@ -58,3 +62,14 @@ V. Livrables
 
 ## INSPI
 https://github.com/jxnata/factory/tree/main
+
+
+## SUBGRAPH mes couilles !
+NFT:
+achat de nft n'est pas capté, je pense qu'il n'écoute pas le nouveau contract crée
+
+Continuer de tester !
+
+https://thegraph.com/studio/subgraph/worldgram/playground
+https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5
+https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#writeContract

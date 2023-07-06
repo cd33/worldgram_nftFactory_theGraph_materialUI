@@ -1,98 +1,39 @@
-type NFTAdded @entity(immutable: true) {
-  id: Bytes!
-  _nftId: BigInt! # uint256
-  _nftAddress: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+# type NFTFactory @entity {
+#   id: ID! @id
+#   address: Bytes!
+#   totalSupply: Int! # uint256 (nextNFT)
+#   # nftContracts: [NFTContract!]!
+#   # #  @derivedFrom(field: "factory")
+# }
+
+type NFTContract @entity {
+  id: ID! @id
+  address: Bytes
+  name: String
+  symbol: String
+  baseURI: String
+  totalSupply: Int
+  maxSupply: Int
+  publicSalePrice: BigInt
+  recipient: Bytes
+  isPaused: Boolean
+  tokens: [NFTToken!] @derivedFrom(field: "contract")
 }
 
-type OwnershipTransferred @entity(immutable: true) {
-  id: Bytes!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-type NFTStorageOwnershipTransferred @entity(immutable: true) {
-  id: Bytes!
-  previousOwner: Bytes! # address
-  newOwner: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-type Approval @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  approved: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type User @entity {
+    id: ID! @id
+    address: Bytes
+    nftOwned: [NFTToken!] @derivedFrom(field: "user")
 }
 
-type ApprovalForAll @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  operator: Bytes! # address
-  approved: Boolean! # bool
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
+type NFTToken @entity {
+  id: ID! @id
+  nftId: BigInt
+  contract: NFTContract
+  user: User
+  #  @derivedFrom(field: "tokens")
 
-type Initialized @entity(immutable: true) {
-  id: Bytes!
-  version: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Paused @entity(immutable: true) {
-  id: Bytes!
-  account: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type StepChanged @entity(immutable: true) {
-  id: Bytes!
-  step: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Transfer @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  tokenId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Unpaused @entity(immutable: true) {
-  id: Bytes!
-  account: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-type NFTContractCreated @entity(immutable: true) {
-  id: Bytes!
-  _name: String! # string
-  _symbol: String! # string
-  _baseURI: String! # string
-  _maxSupply: Int! # uint16
-  _publicSalePrice: BigInt! # uint256
-  _recipient: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  # baseURI: String! # ou métadata directement ?
+  # addressContract: Bytes!
+  # purchasePrice: BigInt! # uint256
 }

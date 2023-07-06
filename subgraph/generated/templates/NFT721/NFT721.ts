@@ -98,24 +98,6 @@ export class Paused__Params {
   }
 }
 
-export class StepChanged extends ethereum.Event {
-  get params(): StepChanged__Params {
-    return new StepChanged__Params(this);
-  }
-}
-
-export class StepChanged__Params {
-  _event: StepChanged;
-
-  constructor(event: StepChanged) {
-    this._event = event;
-  }
-
-  get step(): i32 {
-    return this._event.parameters[0].value.toI32();
-  }
-}
-
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -403,25 +385,6 @@ export class NFT721 extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toString());
-  }
-
-  worldgramBase(): Address {
-    let result = super.call("worldgramBase", "worldgramBase():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_worldgramBase(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "worldgramBase",
-      "worldgramBase():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 }
 

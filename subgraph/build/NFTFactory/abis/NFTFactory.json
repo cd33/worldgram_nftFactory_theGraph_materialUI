@@ -20,38 +20,44 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "nftContractAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
-        "name": "_name",
+        "name": "name",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "_symbol",
+        "name": "symbol",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "_baseURI",
+        "name": "baseURI",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "uint16",
-        "name": "_maxSupply",
+        "name": "maxSupply",
         "type": "uint16"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_publicSalePrice",
+        "name": "publicSalePrice",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_recipient",
+        "name": "recipient",
         "type": "address"
       }
     ],
