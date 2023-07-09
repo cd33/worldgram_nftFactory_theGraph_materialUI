@@ -10,7 +10,7 @@ import { ensureNewUser, userId } from "./entities/User";
 
 export function handleTransfer(event: TransferEvent): void {
   if (
-    event.params.from == new Address(0x0000000000000000000000000000000000000000)
+    event.params.from == Address.fromString("0x0000000000000000000000000000000000000000")
   ) {
     let contractId = nftContractId(event.address);
     let nftContract = ensureNewNFTContract(contractId);
@@ -19,7 +19,7 @@ export function handleTransfer(event: TransferEvent): void {
     let user = ensureNewUser(usrId);
     user.address = event.params.to;
 
-    let nftTokenId = nftToken(event.address, event.params.to);
+    let nftTokenId = nftToken(event.address, event.params.tokenId);
     let tokenNFT = ensureNewNFTToken(nftTokenId);
 
     tokenNFT.nftId = event.params.tokenId;
@@ -40,12 +40,12 @@ export function handleTransfer(event: TransferEvent): void {
 
     let usrId1 = userId(event.params.from);
     let user1 = ensureNewUser(usrId1);
+    user1.address = event.params.from;
     let usrId2 = userId(event.params.to);
     let user2 = ensureNewUser(usrId2);
-    user1.address = event.params.to;
-    user2.address = event.params.from;
+    user2.address = event.params.to;
 
-    let nftTokenId = nftToken(event.address, event.params.from);
+    let nftTokenId = nftToken(event.address, event.params.tokenId);
     let tokenNFT = ensureNewNFTToken(nftTokenId);
     tokenNFT.nftId = event.params.tokenId;
     tokenNFT.contract = nftContract.id

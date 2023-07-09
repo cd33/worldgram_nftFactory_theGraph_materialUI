@@ -64,12 +64,40 @@ V. Livrables
 https://github.com/jxnata/factory/tree/main
 
 
-## SUBGRAPH mes couilles !
-NFT:
-achat de nft n'est pas capté, je pense qu'il n'écoute pas le nouveau contract crée
+## SUBGRAPH
+tester de repasser à sepolia dans subgraph.yaml
+Tout redeployer et retester
 
-Continuer de tester !
+* tester ensuite un échange de nft entre 2 users
+* plusieurs contrats de NFT, plusieurs wallets, plusieurs NFT de chaque collection par user... de la complexité
+* pause et unpaused
+
 
 https://thegraph.com/studio/subgraph/worldgram/playground
 https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5
 https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#writeContract
+
+
+{
+  nftcontracts(first: 5) {
+    id
+    address
+    name
+    symbol
+    baseURI
+    totalSupply
+    maxSupply
+    publicSalePrice
+    recipient
+    isPaused
+    tokens {
+      id
+    }
+  }
+  users(first: 5) {
+    address
+    nftOwned {
+      id
+    }
+  }
+}

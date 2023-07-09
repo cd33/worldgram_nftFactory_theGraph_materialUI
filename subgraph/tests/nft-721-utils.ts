@@ -5,16 +5,19 @@ import {
   ApprovalForAll,
   Initialized,
   Paused,
-  StepChanged,
   Transfer,
   Unpaused
-} from "../generated/NFT721/NFT721"
+} from "../generated/templates/NFT721/NFT721"
 
 export function createApprovalEvent(
   owner: Address,
   approved: Address,
   tokenId: BigInt
 ): Approval {
+
+  const toto = new Address(0x0000000000000000000000000000000000000000)
+  console.log("toto")
+  console.log(toto.toString());
   let approvalEvent = changetype<Approval>(newMockEvent())
 
   approvalEvent.parameters = new Array()
@@ -82,21 +85,6 @@ export function createPausedEvent(account: Address): Paused {
   )
 
   return pausedEvent
-}
-
-export function createStepChangedEvent(step: i32): StepChanged {
-  let stepChangedEvent = changetype<StepChanged>(newMockEvent())
-
-  stepChangedEvent.parameters = new Array()
-
-  stepChangedEvent.parameters.push(
-    new ethereum.EventParam(
-      "step",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(step))
-    )
-  )
-
-  return stepChangedEvent
 }
 
 export function createTransferEvent(

@@ -1,13 +1,13 @@
-import { Address } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { NFTToken } from "../../generated/schema";
 
 export function nftToken(
   nftTokenAddress: Address,
-  userAddress: Address
+  tokenId: BigInt
 ): string {
   return "NFTToken"
     .concat(nftTokenAddress.toHexString())
-    .concat(userAddress.toHexString());
+    .concat("_ID#"+tokenId.toString());
 }
 
 export function ensureNewNFTToken(id: string): NFTToken {
