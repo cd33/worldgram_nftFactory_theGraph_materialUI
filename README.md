@@ -24,41 +24,30 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 *********************************************************************************
 
 ## PLAN
-I. Intégration des requêtes TheGraph
-    B. Créer des requêtes pour interagir avec les contrats NFT déployés
-        1. Identifier les données à récupérer pour chaque nouveau NFT déployé
-        2. Écrire des requêtes GraphQL pour récupérer ces données
+I. Conception de la page React avec Material-UI
+  A. navbar avec rainbow wallet et context
+    - https://frontendshape.com/post/create-a-responsive-navbar-in-react-with-mui-5
+    - https://javascript.works-hub.com/learn/how-to-create-a-responsive-navbar-using-material-ui-and-react-router-f9a01
+    - https://mui.com/material-ui/react-app-bar/
 
-    C. Intégrer les requêtes TheGraph dans la factory de NFT et les tests unitaires
-        1. Ajouter des fonctions dans la factory de NFT pour exécuter les requêtes TheGraph
-        2. Mettre à jour les tests unitaires pour vérifier les interactions avec TheGraph
+  B. Une page dashboard qui affiche les différentes collections nft
+    1. Utiliser des appels API pour récupérer les données depuis la factory de NFT
+    2. Afficher les résultats sur la page React en utilisant les composants de Material-UI
 
-II. Conception de la page React avec Material-UI
-    A. Créer les composants nécessaires pour afficher les résultats des interactions avec les contrats déployés
-        1. Concevoir les composants pour afficher les NFT et leurs métadonnées
-        2. Gérer l'état de l'application pour stocker les données récupérées
+  C. Page admin avec l'ensemble des contrats créés puis acces à autre page admin avec toutes les fonctions
 
-    B. Intégrer la factory de NFT et les requêtes TheGraph dans la page React
-        1. Utiliser des appels API pour récupérer les données depuis la factory de NFT
-        2. Afficher les résultats sur la page React en utilisant les composants de Material-UI
+  D. Tester le tout en local hardhat
 
-* navbar avec rainbow wallet et context
-  - https://frontendshape.com/post/create-a-responsive-navbar-in-react-with-mui-5
-  - https://javascript.works-hub.com/learn/how-to-create-a-responsive-navbar-using-material-ui-and-react-router-f9a01
-  - https://mui.com/material-ui/react-app-bar/
+II. Redéploiement
+    A. Déployer les contrats sur le testnet
+    B. Déployer et cabler le subgraph v6
+    C. Changer les variables contrats coté front
+    D. Tester le tout
 
-* Une page admin avec l'ensemble des contrats créés puis acces à autre page admin avec toutes les fonctions
-* Une page dashboard qui affiche les différentes collections nft
-
-III. Tests unitaires
-    A. Écrire des tests unitaires complets pour les requêtes TheGraph ?
-
-IV. Déploiement sur un testnet
-    A. Déployer les contrats sur le testnet et vérifier leur bon fonctionnement
-
-V. Livrables
+III. Livrables
     A. Rédiger un fichier README détaillé avec des instructions pas à pas pour la configuration, l'installation des dépendances, l'exécution des tests, le lancement de la page React et l'interaction avec les contrats déployés
 
+Facultatif: Écrire des tests unitaires complets pour les requêtes TheGraph
 
 ## INSPI
 https://github.com/jxnata/factory/tree/main
@@ -68,11 +57,6 @@ https://github.com/jxnata/factory/tree/main
 tester de repasser à sepolia dans subgraph.yaml
 Tout redeployer et retester
 
-* tester ensuite un échange de nft entre 2 users
-* plusieurs contrats de NFT, plusieurs wallets, plusieurs NFT de chaque collection par user... de la complexité
-* pause et unpaused
-
-
 https://thegraph.com/studio/subgraph/worldgram/playground
 https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5
 https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#writeContract
@@ -80,22 +64,16 @@ https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#
 
 {
   nftcontracts(first: 5) {
-    id
-    address
+    id  
     name
-    symbol
-    baseURI
     totalSupply
-    maxSupply
-    publicSalePrice
-    recipient
     isPaused
     tokens {
       id
     }
   }
   users(first: 5) {
-    address
+    id
     nftOwned {
       id
     }
