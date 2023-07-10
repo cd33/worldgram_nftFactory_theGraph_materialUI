@@ -18,7 +18,7 @@ const { chains, publicClient } = configureChains(
   [publicProvider()]
 );
 
-const projectId = "WorldGram";
+const projectId = import.meta.env.VITE_PROJECT_ID;
 
 // const { connectors } = getDefaultWallets({
 //     appName: 'WorldGram',

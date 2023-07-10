@@ -25,16 +25,16 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 
 ## PLAN
 I. Conception de la page React avec Material-UI
-  A. navbar avec rainbow wallet et context
-    - https://frontendshape.com/post/create-a-responsive-navbar-in-react-with-mui-5
-    - https://javascript.works-hub.com/learn/how-to-create-a-responsive-navbar-using-material-ui-and-react-router-f9a01
-    - https://mui.com/material-ui/react-app-bar/
+  A. Dashboard
+    1. Voir delphya, passage de home à page NFT, personnalisée de la collection
 
-  B. Une page dashboard qui affiche les différentes collections nft
-    1. Utiliser des appels API pour récupérer les données depuis la factory de NFT
-    2. Afficher les résultats sur la page React en utilisant les composants de Material-UI
+  B. NFT
+    1. Appels API
+    2. Bouton d'achat
+    3. Partie Admin (pause, unpause et gift)
 
-  C. Page admin avec l'ensemble des contrats créés puis acces à autre page admin avec toutes les fonctions
+  C. Admin
+    1. Création d'une collection (newNFT)
 
   D. Tester le tout en local hardhat
 

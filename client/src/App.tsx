@@ -3,9 +3,12 @@ import { WagmiConfig } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { wagmiClient, chains } from "./context/rainbow";
 import { EthersProvider } from "./context/ethersProviderContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Admin from "./pages/Admin";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   const notify = () => toast("Wow so easy!");
@@ -13,11 +16,13 @@ function App() {
     <WagmiConfig config={wagmiClient}>
       <RainbowKitProvider coolMode modalSize="compact" chains={chains}>
         <EthersProvider>
-          <>
-            <Navbar />
-            <button onClick={notify}>Notify!</button>
-            <ToastContainer />
-          </>
+          <Routes>
+            <Route element={<Navbar />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Route>
+          </Routes>
         </EthersProvider>
       </RainbowKitProvider>
     </WagmiConfig>
