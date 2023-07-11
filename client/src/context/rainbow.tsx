@@ -17,14 +17,7 @@ const { chains, publicClient } = configureChains(
   [hardhat, sepolia],
   [publicProvider()]
 );
-
 const projectId = import.meta.env.VITE_PROJECT_ID;
-
-// const { connectors } = getDefaultWallets({
-//     appName: 'WorldGram',
-//     projectId,
-//     chains
-//   });
 
 const connectors = connectorsForWallets([
   {

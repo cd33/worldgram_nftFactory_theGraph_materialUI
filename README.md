@@ -25,16 +25,11 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 
 ## PLAN
 I. Conception de la page React avec Material-UI
-  A. Dashboard
-    1. Voir delphya, passage de home à page NFT, personnalisée de la collection
+  B. Collection
+    1. WEB3, Bouton d'achat
+    2. Partie Admin (pause, unpause et gift)
 
-  B. NFT
-    1. Appels API
-    2. Bouton d'achat
-    3. Partie Admin (pause, unpause et gift)
-
-  C. Admin
-    1. Création d'une collection (newNFT)
+  C. Admin: Création d'une collection (newNFT)
 
   D. Tester le tout en local hardhat
 
@@ -47,7 +42,9 @@ II. Redéploiement
 III. Livrables
     A. Rédiger un fichier README détaillé avec des instructions pas à pas pour la configuration, l'installation des dépendances, l'exécution des tests, le lancement de la page React et l'interaction avec les contrats déployés
 
+Facultatif: Meilleur chargement des datas axios ? getserversideprops ?
 Facultatif: Écrire des tests unitaires complets pour les requêtes TheGraph
+Facultatif: Jouer avec ipfs pour les images, et les afficher coté front
 
 ## INSPI
 https://github.com/jxnata/factory/tree/main
@@ -76,6 +73,7 @@ https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#
     id
     nftOwned {
       id
+      address
     }
   }
 }

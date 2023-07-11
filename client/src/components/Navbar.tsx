@@ -1,4 +1,9 @@
 import * as React from "react";
+import useEthersProvider from "../context/useEthersProvider";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Outlet, Link } from "react-router-dom";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,19 +15,16 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Outlet, Link } from "react-router-dom";
 
 const pages = [
-  { name: "Home", path: "/" },
-  { name: "Admin", path: "/admin" },
+  { name: "Collections", path: "/" },
+  { name: "My NFTs", path: "/mynfts" },
 ];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
-
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -30,12 +32,18 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
+  const { owner } = useEthersProvider();
+  const { address } = useAccount();
+
+  if (address === owner && pages.length === 2) {
+    pages.push({ name: "Admin", path: "/admin" });
+  }
+
   return (
     <>
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
             <Typography
               variant="h6"
               noWrap
@@ -51,7 +59,7 @@ function ResponsiveAppBar() {
                 textDecoration: "none",
               }}
             >
-              LOGO
+              <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -90,34 +98,16 @@ function ResponsiveAppBar() {
                 ))}
               </Menu>
             </Box>
-            <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href=""
-              sx={{
-                mr: 2,
-                display: { xs: "flex", md: "none" },
-                flexGrow: 1,
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              LOGO
-            </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
-                <Button
-                  key={page.name}
-                  // onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  <Link to={page.path}>{page.name}</Link>
-                </Button>
+                <Link key={page.name} to={page.path}>
+                  <Button
+                    // onClick={handleCloseNavMenu}
+                    sx={{ mr: 3, color: "white", display: "block" }}
+                  >
+                    {page.name}
+                  </Button>
+                </Link>
               ))}
             </Box>
 
@@ -125,9 +115,23 @@ function ResponsiveAppBar() {
           </Toolbar>
         </Container>
       </AppBar>
-      <div className="wrapper">
+      
+      <div style={{minHeight: "100vh"}}>
         <Outlet />
       </div>
+
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+        <Typography variant="body2" color="text.secondary" align="center">
+          {"Copyright © "}
+          <Link
+            style={{ color: "rgb(0 0 0 / 80%)" }}
+            to="https://github.com/cd33"
+          >
+            cd33
+          </Link>
+          {" 2023."}
+        </Typography>
+      </Box>
     </>
   );
 }

@@ -33,7 +33,6 @@ type NFTToken @entity {
   user: User
   #  @derivedFrom(field: "tokens")
 
-  # baseURI: String! # ou métadata directement ?
   # addressContract: Bytes!
   # purchasePrice: BigInt! # uint256
 }

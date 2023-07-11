@@ -1,52 +1,49 @@
-import { useEffect, useState, useCallback } from "react";
-import useEthersProvider from "../context/useEthersProvider";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { ethers } from "ethers";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { FIRST5_QUESTIONS } from "../context/queries";
+import { NFT_CONTRACTS } from "../context/queries";
 
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [contracts, setContracts] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const loadContracts = async () => {
+      setIsLoading(true);
       const endpoint = import.meta.env.VITE_GRAPH_QL_API;
-      let response = await axios.post(endpoint!, FIRST5_QUESTIONS);
+      let response = await axios.post(endpoint!, NFT_CONTRACTS);
 
       response = JSON.parse(JSON.stringify(response.data.data.nftcontracts));
       setContracts(response);
+      setIsLoading(false);
     };
 
     loadContracts();
   }, []);
 
-  console.log("contracts :>> ", contracts);
-
-  // const { owner } = useEthersProvider();
-  // const { address, isConnected } = useAccount();
-  // const provider = usePublicClient();
-
-  // console.log('owner :>> ', owner);
-  // console.log('address :>> ', address);
-  // console.log('isConnected :>> ', isConnected);
-  // console.log('provider :>> ', provider);
-  // console.log('signer :>> ', signer);
-
+  if (isLoading) {
+    return (
+      <Container>
+        <h1>Loading...</h1>
+      </Container>
+    );
+  }
   return (
     <main>
       <Box
         sx={{
-          bgcolor: "background.paper",
           pt: 8,
           pb: 6,
         }}
@@ -72,7 +69,6 @@ export default function Home() {
         </Container>
       </Box>
       <Container sx={{ py: 8 }} maxWidth="md">
-        {/* End hero unit */}
         <Grid container spacing={4}>
           {contracts.map((contract: any) => (
             <Grid item key={contract.id} xs={12} sm={6} md={4}>
@@ -101,12 +97,14 @@ export default function Home() {
                   <Typography>Total Supply: {contract.totalSupply}</Typography>
                   <Typography>
                     {contract.isPaused
-                      ? "Contract online"
-                      : "Contract in pause"}
+                      ? "Contract in pause"
+                      : "Contract online"}
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ justifyContent: "center" }}>
-                  <Button size="small">View Collection</Button>
+                  <Link to={`/collection/${contract.address}`}>
+                    <Button size="small">View Collection</Button>
+                  </Link>
                 </CardActions>
               </Card>
             </Grid>
@@ -114,26 +112,5 @@ export default function Home() {
         </Grid>
       </Container>
     </main>
-    //   <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-    //     <Typography variant="h6" align="center" gutterBottom>
-    //       Footer
-    //     </Typography>
-    //     <Typography
-    //       variant="subtitle1"
-    //       align="center"
-    //       color="text.secondary"
-    //       component="p"
-    //     >
-    //       Something here to give the footer a purpose!
-    //     </Typography>
-    //     <Typography variant="body2" color="text.secondary" align="center">
-    //       {"Copyright © "}
-    //       <Link color="inherit" href="https://mui.com/">
-    //         Your Website
-    //       </Link>{" "}
-    //       {new Date().getFullYear()}
-    //       {"."}
-    //     </Typography>
-    //   </Box>
   );
 }

@@ -44,9 +44,9 @@ async function main() {
   await base.pause(totoNFTAddress);
   await base.pause(fooNFTAddress);
 
-  // await base.unpause(worldgramNFTAddress)
-  // await base.unpause(totoNFTAddress)
-  // await base.unpause(fooNFTAddress)
+  await base.unpause(worldgramNFTAddress);
+  await base.unpause(totoNFTAddress);
+  await base.unpause(fooNFTAddress);
 
   //  owner				      c6	=6
   // acount1		a3		  c2	=5
