@@ -4,10 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: NFTFactory
-    network: localhost
+    network: sepolia
     source:
       abi: NFTFactory
-      address: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+      address: "0x24456e5fbce92303c1b4C45955963F2FEBA310C1"
+      startBlock: 3877148
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -25,7 +26,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: NFT721
-    network: localhost
+    network: sepolia
     source:
       abi: NFT721
     mapping:

@@ -1,63 +1,149 @@
 # worldgram
-## EXERCICE
-Nous vous invitons à mettre en pratique vos compétences et votre expertise pour une fonctionnalité clé de notre projet actuel, où nous cherchons à développer NFT Factory en utilisant le framework Hardhat.
-Voici vos tâches principales :
+## ASSIGNMENT
+We invite you to apply your skills and expertise to a key feature in our current project, where we aim to develop an NFT (Non-Fungible Token) factory utilizing the Hardhat framework.  
+Here are your primary tasks:
 ### NFT Factory
-Développer une factory de NFT avec la capacité de déployer des contrats NFT individuels en utilisant le framework Hardhat. Une interface web pour la création de NFT n'est pas nécessaire; une simple tâche Hardhat suffira.
+Develop an NFT factory with the ability to deploy individual NFT contracts using the Hardhat framework. A web interface for NFT minting is not necessary; a simple Hardhat task will suffice.
 
-### Requêtes TheGraph
-Une fois que chaque contrat NFT est déployé, nous avons besoin de la fonctionnalité pour interagir avec et récupérer les données de chaque nouveau NFT. Cela peut être réalisé en créant et en exécutant des requêtes à travers TheGraph.
+### TheGraph Queries
+Once each NFT contract is deployed, we need the functionality to interact with and retrieve data for each new NFT. This can be achieved by creating and executing queries through TheGraph.
 
-### Page React avec Material-UI
-Concevoir une page React minimaliste en utilisant Material-UI pour présenter les résultats des interactions avec les contrats déployés.
+### React Page with Material-UI
+Craft a minimalist React page using Material-UI to showcase the results of the interactions with the deployed contracts.
 
-### Tests unitaires
-Rédiger des tests unitaires complets pour affirmer la fonctionnalité et la fiabilité des contrats.
+### Unit Testing
+Write comprehensive unit tests to affirm the functionality and reliability of the contracts.
 
-### Déploiement sur un testnet
-Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; vos options incluent Sepolia, Goerli et Mumbai.
+### Testnet Deployment
+Feel free to select any testnet for contract deployment; your options include Sepolia, Goerli, and Mumbai.
 
-### Livrables
-* Dépôt GitHub : Téléchargez votre code finalisé sur un dépôt GitHub public. Cela facilitera le processus d'examen et ouvrira des possibilités de collaboration future.
-* Fichier README : offrant des instructions détaillées, étape par étape, pour les procédures de configuration, les installations de dépendances, l'exécution des tests, le lancement de la page React et l'interaction avec les contrats déployés.
+### Deliverables
+* GitHub Repository: Upload your finalized code to a public GitHub repository. This will facilitate an efficient review process and open possibilities for future collaboration.
+* Fichier README : Your GitHub repository should contain a README file offering detailed, step-by-step instructions for setup procedures, dependency installations, test execution, launching the React page, and interacting with the deployed contracts.
 
-*********************************************************************************
+## Prerequisites
+Before getting started, ensure that you have the following installed
+* Node.js
+* Yarn package manager
+* Hardhat
+* Metamask browser extension
+* Docker (if you want to test subgraph locally)
 
-## PLAN
-I. Redéploiement
-    A. Déployer les contrats sur le testnet
-    B. Déployer et cabler le subgraph v6
-    C. Changer les variables contrats coté front
-    D. Tester le tout
+## Installation
+If you simply want to test the project, you can go to this link LINK !!!!!!!!!!!  
 
-II. Livrables
-    A. Rédiger un fichier README détaillé avec des instructions pas à pas pour la configuration, l'installation des dépendances, l'exécution des tests, le lancement de la page React et l'interaction avec les contrats déployés
+If you want to deploy the whole thing locally, follow these instructions
+* In each sub-folder (client, hardhat and subgraph)
+```
+yarn install
+```
+* Create .env in ./client
+```
+VITE_GRAPH_QL_API=https://api.studio.thegraph.com/query/49406/worldgram/v0.1.0 (or in local: http://127.0.0.1:8000/subgraphs/name/worldgram)
+VITE_PROJECT_ID=XXX
+```
+* Create .env in ./hardhat
+```
+SEPOLIA_TESTNET_ALCHEMY="XXX"
+PRIVATE_KEY_TEST="XXX"
+ETHERSCAN="XXX"
+```
+* Change the XXX to your own values
 
-Facultatif: Meilleur chargement des datas axios ? getserversideprops ?
-Facultatif: Écrire des tests unitaires complets pour les requêtes TheGraph
-Facultatif: Utiliser ipfs pour les images, et les afficher coté front
+## Deploying NFT Contracts
+To deploy NFT contracts, follow these steps in ./hardhat
+* Update the hardhat.config.js file with your desired network configuration and deployment settings.
+* Run the deployment script:
+```
+npx hardhat run scripts/deploy.js --network <network-name>
+```
+* Replace <network-name> with the desired network (e.g., sepolia, goerli, mumbai).
+The script will deploy the NFT contracts and provide the contract addresses.
 
-## Other
-https://thegraph.com/studio/subgraph/worldgram/playground  
-https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5  
+## Unit Testing
+To run the unit tests, in ./hardhat, use the following command
+```
+npx hardhat test
+```
+The tests will verify the functionality and reliability of the NFT contracts.
 
+## Running the React Page
+To run the React page locally, follow these steps in ./client
+```
+yarn dev
+```
+Open your browser and visit http://localhost:5173 to access the React page.
+
+## Test subgraph locally:
+* Download the repo 
+```
+git clone https://github.com/graphprotocol/graph-node/
+```
+
+* Launch a hardhat node in the hardhat folder:
+```
+yarn hardhat node --hostname 0.0.0.0
+```
+
+* Launch Docker and in the downloaded folder ./graph-node/docker
+```
+docker-compose up
+```
+
+* On your terminal with the hardhat node, wait for the blocks to unroll
+
+* In the ./subgraph folder
+```
+yarn run create-local
+```
+
+* Deploy the contracts on the node and create interactions in ./hardhat
+```
+yarn hardhat --network localhost run scripts/deploy.ts
+yarn hardhat --network localhost run .\scripts\subgraph_createBuy.ts
+yarn hardhat --network localhost run .\scripts\subgraph_transferPause.ts
+```
+
+* Deploy the subgraph in ./subgraph:
+```
+yarn run deploy-local
+```
+
+* Change the variables with contrats deployed addresses in ./client/src/context/ethersProviderContext.tsx and VITE_GRAPH_QL_API in ./client/.env
+
+* Finally, launch the client, in ./client
+```
+yarn dev
+```
+
+## Testing interactions with thegraph
+Go to the [local deployer site](http://127.0.0.1:8000/subgraphs/name/worldgram) or [the project's subgraph](https://api.studio.thegraph.com/query/49406/worldgram/version/latest) and enter for example
 ```
 {
   nftcontracts(first: 5) {
-    id  
+    id
+    address
     name
+    symbol
+    baseURI
     totalSupply
+    maxSupply
+    publicSalePrice
+    recipient
     isPaused
     tokens {
       id
     }
   }
   users(first: 5) {
-    id
+    address
     nftOwned {
       id
-      address
     }
   }
 }
 ```
+
+## Possible improvements
+* Use ipfs for images, and display them on the front end
+* Write full unit tests for TheGraph requests
