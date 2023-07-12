@@ -1,6 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { configureChains, createConfig } from "wagmi";
-import { hardhat, sepolia } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
@@ -12,7 +12,8 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 
 const { chains, publicClient } = configureChains(
-  [hardhat, sepolia],
+  // [hardhat, sepolia],
+  [sepolia],
   [publicProvider()]
 );
 const projectId = import.meta.env.VITE_PROJECT_ID;

@@ -30,7 +30,7 @@ Before getting started, ensure that you have the following installed
 * Docker (if you want to test subgraph locally)
 
 ## Installation
-If you simply want to test the project, you can go to this link LINK !!!!!!!!!!!  
+If you simply want to test the project, you can go to https://worldgram-nft-factory-the-graph-material-ui.vercel.app/
 
 If you want to deploy the whole thing locally, follow these instructions
 * In each sub-folder (client, hardhat and subgraph)
