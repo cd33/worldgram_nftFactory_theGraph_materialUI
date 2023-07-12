@@ -13,6 +13,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MyNFTs = () => {
   const [infos, setInfos] = useState<any>([]);
@@ -22,19 +23,24 @@ const MyNFTs = () => {
   useEffect(() => {
     const loadUserInfos = async () => {
       setIsLoading(true);
-      const endpoint = import.meta.env.VITE_GRAPH_QL_API;
-      let response = await axios.post(
-        endpoint!,
-        getUserResponsesQuery(address)
-      );
-
-      if (response.data.data && response.data.data.users[0]) {
-        response = JSON.parse(
-          JSON.stringify(response.data.data.users[0].nftOwned)
+      try {
+        const endpoint = import.meta.env.VITE_GRAPH_QL_API;
+        let response = await axios.post(
+          endpoint!,
+          getUserResponsesQuery(address)
         );
-        setInfos(response);
+
+        if (response.data.data && response.data.data.users[0]) {
+          response = JSON.parse(
+            JSON.stringify(response.data.data.users[0].nftOwned)
+          );
+          setInfos(response);
+        }
+      } catch (err) {
+        toast.error("Problems with subgraph");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     address && loadUserInfos();

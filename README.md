@@ -24,41 +24,24 @@ Vous pouvez choisir n'importe quel testnet pour le déploiement des contrats ; v
 *********************************************************************************
 
 ## PLAN
-I. Conception de la page React avec Material-UI
-  B. Collection
-    1. WEB3, Bouton d'achat
-    2. Partie Admin (pause, unpause et gift)
-
-  C. Admin: Création d'une collection (newNFT)
-
-  D. Tester le tout en local hardhat
-
-II. Redéploiement
+I. Redéploiement
     A. Déployer les contrats sur le testnet
     B. Déployer et cabler le subgraph v6
     C. Changer les variables contrats coté front
     D. Tester le tout
 
-III. Livrables
+II. Livrables
     A. Rédiger un fichier README détaillé avec des instructions pas à pas pour la configuration, l'installation des dépendances, l'exécution des tests, le lancement de la page React et l'interaction avec les contrats déployés
 
 Facultatif: Meilleur chargement des datas axios ? getserversideprops ?
 Facultatif: Écrire des tests unitaires complets pour les requêtes TheGraph
-Facultatif: Jouer avec ipfs pour les images, et les afficher coté front
+Facultatif: Utiliser ipfs pour les images, et les afficher coté front
 
-## INSPI
-https://github.com/jxnata/factory/tree/main
+## Other
+https://thegraph.com/studio/subgraph/worldgram/playground  
+https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5  
 
-
-## SUBGRAPH
-tester de repasser à sepolia dans subgraph.yaml
-Tout redeployer et retester
-
-https://thegraph.com/studio/subgraph/worldgram/playground
-https://api.studio.thegraph.com/proxy/49406/worldgram/v0.0.5
-https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#writeContract
-
-
+```
 {
   nftcontracts(first: 5) {
     id  
@@ -77,3 +60,4 @@ https://sepolia.etherscan.io/address/0x5850619b15272eb061a22d43334c5dea6fff214c#
     }
   }
 }
+```

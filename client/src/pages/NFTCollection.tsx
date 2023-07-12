@@ -1,88 +1,104 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useEthersProvider from "../context/useEthersProvider";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { ethers } from "ethers";
 import Contract721 from "../context/NFT721.json";
+import ContractBase from "../context/WorldgramBase.json";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { getNftContractByAddress } from "../context/queries";
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, Input, Stack, Typography } from "@mui/material";
 import Counter from "../components/Counter";
+import { useEthersSigner } from "../context/useEthersSigner";
 
 const NFTCollection = () => {
   const params = useParams();
   const slug = params.slug || "";
   const [data, setData] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingSubgraph, setIsLoadingSubgraph] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { owner } = useEthersProvider();
+  const { owner, worldgramBase } = useEthersProvider();
   const { address, isConnected } = useAccount();
   const provider = usePublicClient();
-  const { data: signer } = useWalletClient();
+  const signer = useEthersSigner();
 
   const [counterNFT, setCounterNFT] = useState<number>(1);
-  const [basketETH, setBasketETH] = useState<number>(0);
   const [counterGift, setCounterGift] = useState<number>(0);
   const [giftAddress, setGiftAddress] = useState<string>("");
 
   useEffect(() => {
     const loadUserData = async () => {
       const endpoint = import.meta.env.VITE_GRAPH_QL_API;
-      let response = await axios.post(endpoint!, getNftContractByAddress(slug));
-
-      if (response.data.data && response.data.data.nftcontracts[0]) {
-        response = JSON.parse(
-          JSON.stringify(response.data.data.nftcontracts[0])
+      try {
+        let response = await axios.post(
+          endpoint!,
+          getNftContractByAddress(slug)
         );
-        setData(response);
+
+        if (response.data.data && response.data.data.nftcontracts[0]) {
+          response = JSON.parse(
+            JSON.stringify(response.data.data.nftcontracts[0])
+          );
+          setData(response);
+        }
+      } catch (err) {
+        toast.error("Problems with subgraph");
+      } finally {
+        setIsLoadingSubgraph(false);
       }
-      setIsLoading(false);
     };
 
     loadUserData();
   }, [slug]);
 
-  async function publicSaleMint(_quantity: number) {
-    if (provider && signer && basketETH) {
+  async function publicSaleMint() {
+    if (provider && signer && counterNFT) {
       setIsLoading(true);
       const contract = new ethers.Contract(slug, Contract721.abi, signer);
-
-      console.log("basketETH.toString() :>> ", basketETH.toString());
+      const value = counterNFT * data.publicSalePrice;
 
       try {
         const overrides = {
           from: address,
-          value: ethers.parseEther(basketETH.toString()),
+          value,
         };
-        const transaction = await contract.publicSaleMint(_quantity, overrides);
+        const transaction = await contract.publicSaleMint(
+          counterNFT,
+          overrides
+        );
         await transaction.wait();
-        setIsLoading(false);
-        toast.success("You have just purchased an NFT !");
+        toast.success("You have just purchased NFT !");
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.log(error.message);
         } else {
           console.log(String(error));
         }
+        toast.error("Problems with your NFT purchase");
+      } finally {
         setIsLoading(false);
-        toast.error("Problems with your NFT purchase, please try again later");
       }
     }
   }
 
-  async function gift(_to: string, _quantity: number) {
+  async function gift() {
     if (provider && signer) {
       setIsLoading(true);
-      const contract = new ethers.Contract(slug, Contract721.abi, signer);
+      const contract = new ethers.Contract(
+        worldgramBase,
+        ContractBase.abi,
+        signer
+      );
 
       try {
-        const overrides = {
-          from: address,
-        };
-        const transaction = await contract.gift(_to, _quantity, overrides);
+        const transaction = await contract.gift(
+          slug,
+          giftAddress,
+          counterGift
+        );
         await transaction.wait();
-        setIsLoading(false);
         toast.success("You have just gifted an NFT !");
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -90,21 +106,73 @@ const NFTCollection = () => {
         } else {
           console.log(String(error));
         }
+        toast.error("Problems with your gift");
+      } finally {
         setIsLoading(false);
-        toast.error("Problems with your gift, please try again later");
       }
     }
   }
 
-  console.log("data :>> ", data);
-  if (isLoading) {
+  async function pause() {
+    if (signer) {
+      setIsLoading(true);
+      const contract = new ethers.Contract(
+        worldgramBase,
+        ContractBase.abi,
+        signer
+      );
+
+      try {
+        const transaction = await contract.pause(slug);
+        await transaction.wait();
+        toast.success("The contract is in pause");
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        } else {
+          console.log(String(error));
+        }
+        toast.error("Problems with the contract");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  async function unpause() {
+    if (signer) {
+      setIsLoading(true);
+      const contract = new ethers.Contract(
+        worldgramBase,
+        ContractBase.abi,
+        signer
+      );
+
+      try {
+        const transaction = await contract.unpause(slug);
+        await transaction.wait();
+        toast.success("The contract is online");
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        } else {
+          console.log(String(error));
+        }
+        toast.error("Problems with the contract");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  if (isLoadingSubgraph) {
     return (
       <Container>
         <h1>Loading...</h1>
       </Container>
     );
   }
-  if (data.length == 0) {
+  if (data.length === 0) {
     return (
       <Container>
         <h1>Not Found ☹️</h1>
@@ -112,90 +180,157 @@ const NFTCollection = () => {
       </Container>
     );
   } else {
-    if (!data.isPaused) {
-      return (
-        <Container>
-          <h1>Contract {data.name} in Pause</h1>
-          <Typography>
-            Please wait for the owner to change the state of the contract
-          </Typography>
-        </Container>
-      );
-    }
     return (
       <Container>
         {!isConnected ? (
           <h1>Please connect your wallet</h1>
         ) : (
           <>
-            <h1>{data.name}</h1>
+            {data.isPaused ? (
+              <>
+                <h1>Contract {data.name} in Pause</h1>
+                <Typography>
+                  Please wait for the owner to change the state of the contract
+                </Typography>
+              </>
+            ) : (
+              <>
+                <h1>{data.name}</h1>
 
-            <Typography>
-              Supply: {data.totalSupply}/{data.maxSupply}
-            </Typography>
+                <Typography>
+                  Supply: {data.totalSupply}/{data.maxSupply}
+                </Typography>
 
-            {/* <div className="flex flex-col items-center justify-center mb-12">
-              <p className="text-xl mb-2">How many NFTs do you want ?</p>
+                <Container maxWidth="sm">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      mt: "20px",
+                    }}
+                  >
+                    Number of nfts desired
+                  </Typography>
+                  <Counter
+                    setCounter={setCounterNFT}
+                    sx={{
+                      my: "10px",
+                    }}
+                  />
 
-              <Counter
-                counter={counterNFT}
-                setCounter={setCounterNFT}
-                start={1}
-                limit={sellingStep === 1 ? 3 : 100}
-              />
-
-              <div className="flex items-center justify-center my-12">
-                <p className="text-base mr-8">
-                  Price : {counterNFT * publicSalePrice} USDT or {basketETH} ETH
-                </p>
-                <Button
-                  onClick={() => publicSaleMint(counterNFT)}
-                  label={isLoading ? "Loading..." : "PUBLIC MINT ETH"}
-                  disabled={isLoading ? true : false}
-                />
-              </div>
-            </div> */}
-
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Typography
+                      sx={{
+                        mr: "20px",
+                      }}
+                    >
+                      Price : {ethers.formatEther(counterNFT * Number(data.publicSalePrice))} ETH
+                    </Typography>
+                    <Button
+                      sx={{
+                        my: "10px",
+                        border: "1px solid #0E76FD",
+                        "&:focus": {
+                          outline: "unset",
+                        },
+                      }}
+                      onClick={publicSaleMint}
+                      disabled={isLoading ? true : false}
+                    >
+                      {isLoading ? "Loading..." : "PUBLIC MINT ETH"}
+                    </Button>
+                  </Stack>
+                </Container>
+              </>
+            )}
             {/* ADMIN */}
             {address && owner === address && (
-              <>
-                <p className="text-2xl text-red-500 my-12">ADMIN</p>
+              <Container
+                maxWidth="sm"
+                sx={{
+                  mt: "50px",
+                }}
+              >
+                <Typography variant="h2">ADMIN</Typography>
 
-                <div className="flex items-center justify-center mb-12">
-                  <input
+                <Typography
+                  variant="h5"
+                  sx={{
+                    mt: "20px",
+                  }}
+                >
+                  GIFT
+                </Typography>
+                <Stack direction={{ xs: "column", sm: "row" }}>
+                  <Input
+                    sx={{
+                      my: "10px",
+                    }}
                     placeholder="Address"
                     onChange={(e) => setGiftAddress(e.target.value)}
-                    className="relative block overflow-hidden rounded-lg border border-gray-200 px-3 py-3 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
                   />
 
                   <Counter
-                    counter={counterGift}
                     setCounter={setCounterGift}
-                    start={1}
-                    limit={100}
+                    sx={{
+                      my: "10px",
+                    }}
                   />
 
                   <Button
-                    onClick={() => gift(giftAddress, counterGift)}
-                    label={isLoading ? "Loading..." : "GIFT"}
+                    sx={{
+                      my: "10px",
+                      border: "1px solid #0E76FD",
+                      "&:focus": {
+                        outline: "unset",
+                      },
+                    }}
+                    onClick={gift}
                     disabled={isLoading ? true : false}
-                  />
-                </div>
+                  >
+                    {isLoading ? "Loading..." : "GIFT"}
+                  </Button>
+                </Stack>
 
-                {/* <div className="flex items-center justify-center mb-12">
-              <input
-                placeholder="Merkle Root"
-                onChange={(e) => setNewMerkleRoot(e.target.value)}
-                className="relative block overflow-hidden rounded-lg border border-gray-200 px-3 py-3 mr-8 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-              />
-
-              <Button
-                onClick={() => setMerkleRoot(newMerkleRoot)}
-                label={isLoading ? "Loading..." : "SET MERKLEROOT"}
-                disabled={isLoading ? true : false}
-              />
-            </div> */}
-              </>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    mt: "50px",
+                  }}
+                >
+                  PAUSE & UNPAUSE
+                </Typography>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Typography>
+                    The contract is {data.isPaused ? "in pause" : "online"}
+                  </Typography>
+                  <Button
+                    sx={{
+                      ml: "20px",
+                      my: "10px",
+                      border: "1px solid #0E76FD",
+                      "&:focus": {
+                        outline: "unset",
+                      },
+                    }}
+                    onClick={data.isPaused ? unpause : pause}
+                    disabled={isLoading ? true : false}
+                  >
+                    {isLoading
+                      ? "Loading..."
+                      : data.isPaused
+                      ? "UNPAUSE"
+                      : "PAUSE"}
+                  </Button>
+                </Stack>
+              </Container>
             )}
             {/* FIN ADMIN */}
           </>

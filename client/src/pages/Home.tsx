@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [contracts, setContracts] = useState<any>([]);
@@ -22,12 +23,16 @@ export default function Home() {
   useEffect(() => {
     const loadContracts = async () => {
       setIsLoading(true);
-      const endpoint = import.meta.env.VITE_GRAPH_QL_API;
-      let response = await axios.post(endpoint!, NFT_CONTRACTS);
-
-      response = JSON.parse(JSON.stringify(response.data.data.nftcontracts));
-      setContracts(response);
-      setIsLoading(false);
+      try {
+        const endpoint = import.meta.env.VITE_GRAPH_QL_API;
+        let response = await axios.post(endpoint!, NFT_CONTRACTS);
+        response = JSON.parse(JSON.stringify(response.data.data.nftcontracts));
+        setContracts(response);
+      } catch (err) {
+        toast.error("Problems with subgraph");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadContracts();
@@ -70,45 +75,55 @@ export default function Home() {
       </Box>
       <Container sx={{ py: 8 }} maxWidth="md">
         <Grid container spacing={4}>
-          {contracts.map((contract: any) => (
-            <Grid item key={contract.id} xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardMedia
-                  component="div"
+          {contracts.length === 0 && (
+            <Container>
+              <Typography variant="h4" align="center">
+                There is no NFT contract
+              </Typography>
+            </Container>
+          )}
+          {contracts &&
+            contracts.map((contract: any) => (
+              <Grid item key={contract.id} xs={12} sm={6} md={4}>
+                <Card
                   sx={{
-                    // 16:9
-                    pt: "56.25%",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
-                  image="https://source.unsplash.com/random?wallpapers"
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {contract.name}
-                  </Typography>
-                  <Typography>
-                    Address: {contract.address.substring(0, 20)}...
-                  </Typography>
-                  <Typography>Total Supply: {contract.totalSupply}</Typography>
-                  <Typography>
-                    {contract.isPaused
-                      ? "Contract in pause"
-                      : "Contract online"}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: "center" }}>
-                  <Link to={`/collection/${contract.address}`}>
-                    <Button size="small">View Collection</Button>
-                  </Link>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      // 16:9
+                      pt: "56.25%",
+                    }}
+                    image="https://source.unsplash.com/random?wallpapers"
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {contract.name}
+                    </Typography>
+                    <Typography>
+                      Address: {contract.address.substring(0, 20)}...
+                    </Typography>
+                    <Typography>
+                      Total Supply: {contract.totalSupply}
+                    </Typography>
+                    <Typography>
+                      {contract.isPaused
+                        ? "Contract in pause"
+                        : "Contract online"}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: "center" }}>
+                    <Link to={`/collection/${contract.address}`}>
+                      <Button size="small">View Collection</Button>
+                    </Link>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
       </Container>
     </main>

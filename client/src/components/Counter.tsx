@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, ButtonGroup, Button, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { blueGrey } from "@mui/material/colors";
@@ -35,13 +35,18 @@ const StyledInput = styled(TextField)({
   },
 });
 
-export default function Counter() {
+export default function Counter({ setCounter, sx }: any) {
   const [count, setCount] = useState(1);
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     setCount(Math.max(Number(event.target.value), 1));
   };
+
+  useEffect(() => {
+    setCounter(count);
+  }, [count, setCounter]);
+
   return (
-    <Container>
+    <Container sx={sx}>
       <ButtonGroup>
         <StyledButton
           onClick={() => setCount((prev) => prev - 1)}

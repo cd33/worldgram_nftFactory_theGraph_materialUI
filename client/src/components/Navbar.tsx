@@ -21,7 +21,7 @@ const pages = [
   { name: "My NFTs", path: "/mynfts" },
 ];
 
-function ResponsiveAppBar() {
+export default function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -102,8 +102,13 @@ function ResponsiveAppBar() {
               {pages.map((page) => (
                 <Link key={page.name} to={page.path}>
                   <Button
-                    // onClick={handleCloseNavMenu}
-                    sx={{ mr: 3, color: "white", display: "block" }}
+                    sx={{
+                      mr: 3,
+                      color: "white",
+                      "&:focus": {
+                        outline: "unset",
+                      },
+                    }}
                   >
                     {page.name}
                   </Button>
@@ -115,8 +120,8 @@ function ResponsiveAppBar() {
           </Toolbar>
         </Container>
       </AppBar>
-      
-      <div style={{minHeight: "100vh"}}>
+
+      <div style={{ minHeight: "100vh" }}>
         <Outlet />
       </div>
 
@@ -135,4 +140,3 @@ function ResponsiveAppBar() {
     </>
   );
 }
-export default ResponsiveAppBar;
